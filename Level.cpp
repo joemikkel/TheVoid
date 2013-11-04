@@ -57,7 +57,7 @@ bool Level::collideWithTerrain(Entity* entity)
 		hgeVector entityNormalizedVector = (player->getVelocity()) / player->getSpeed();
 		float dotProduct = normalVector->Dot(&entityNormalizedVector);
 		hgeVector reboundVector = player->getSpeed() * (-2 * dotProduct * (*normalVector) + entityNormalizedVector);
-		entity->setVelocity(reboundVector * 0.5);
+		entity->setVelocity(reboundVector * 0.65);
 
 		terrain->makeHole(terrain->lastCollisionX, terrain->lastCollisionY, 4, hge);
 		particleManager->SpawnPS(&(collisionLarge->info), terrain->lastCollisionX, terrain->lastCollisionY);

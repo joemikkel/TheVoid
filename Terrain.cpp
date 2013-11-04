@@ -39,16 +39,45 @@ Terrain::Terrain(int xSize, int ySize, HGE* hge)
 
 void Terrain::generate(HGE* hge, DWORD* lockedArray)
 {
-	int deltaH = 0;
-	int maxDeltaH = 2;
-	int leftOrigin = height * 0.75;
-	int currentH = leftOrigin;
-	int maxHeight = height * 0.9;
-	int minHeight = height * 0.5;
+	//configuration variables; boundaries are 'soft'			
+	float maxDeltaH = 2;				//how much the terrain is allowed to move in y across one x (i.e. max slope)
+	int leftOrigin = height * 0.75;	//how far down the left end of the terrain 'starts'
+	int maxHeight = height * 0.9;	//how far down the screen the terrain is allowed to go
+	int minHeight = height * 0.5;	//how high up the screen the terrain is allowed to go <^-coords are reversed
+	int keepDeltaOdds = 80;			//% chance that deltaH won't change
+
+	float deltaH = hge->Random_Float(-1, 1);
+	float deltaHAggregate = 0;
+	int currentH = leftOrigin;	
 
 	for(int x = 0; x < width; x++)
 	{
-		deltaH += hge->Random_Int(-1, 1);
+
+		int randomNum = hge->Random_Int(0,100);
+		if(randomNum > keepDeltaOdds)
+		{
+			deltaH += hge->Random_Float(-1, 1);
+			//keepDeltaOdds = hge->Random_Int(80,99);
+		}
+
+		if(abs(deltaH)<1)
+		{
+			deltaHAggregate += deltaH;
+			if(abs(deltaHAggregate) > 1)
+			{
+				deltaHAggregate = 0;
+				currentH++;
+			}
+			else
+			{
+				deltaHAggregate += deltaH;
+			}
+		}
+		else
+			currentH += deltaH;
+
+
+		//check steepness bound and correct
 		if(deltaH > maxDeltaH)
 			deltaH = maxDeltaH;
 		else if(deltaH < -maxDeltaH)
@@ -58,8 +87,6 @@ void Terrain::generate(HGE* hge, DWORD* lockedArray)
 			deltaH -= 1;
 		else if(currentH <= minHeight)
 			deltaH += 1;
-
-		currentH += deltaH;
 
 		for(int j = currentH; j < height; j++)
 		{
