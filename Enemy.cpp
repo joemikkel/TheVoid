@@ -12,17 +12,22 @@ Enemy::Enemy(float _xPos, float _yPos, float _mass, HTEXTURE texture)
 	angularVelocity = 0;
 	angle = M_PI;
 
+	setGFX(texture);
+}
+
+void Enemy::setGFX(HTEXTURE texture)
+{
 	sprite = new hgeSprite(texture,107,11,16,24);
 	sprite->SetFlip(false, true);
 	sprite->SetHotSpot(8,12);
 
 	boundingBox = new hgeRect();
-	sprite->GetBoundingBox(_xPos, _yPos, boundingBox);
+	sprite->GetBoundingBox(position.x, position.y, boundingBox);
 
-	bbox0 = new hgeVector(boundingBox->x1 - _xPos, boundingBox->y1 - _yPos);
-	bbox1 = new hgeVector(boundingBox->x2 - _xPos, boundingBox->y1 - _yPos);
-	bbox2 = new hgeVector(boundingBox->x2 - _xPos, boundingBox->y2 - _yPos);
-	bbox3 = new hgeVector(boundingBox->x1 - _xPos, boundingBox->y2 - _yPos);
+	bbox0 = new hgeVector(boundingBox->x1 - position.x, boundingBox->y1 - position.y);
+	bbox1 = new hgeVector(boundingBox->x2 - position.x, boundingBox->y1 - position.y);
+	bbox2 = new hgeVector(boundingBox->x2 - position.x, boundingBox->y2 - position.y);
+	bbox3 = new hgeVector(boundingBox->x1 - position.x, boundingBox->y2 - position.y);
 
 	thrustSprite = new hgeSprite(texture, 0,0,30,30);
 	thrustSprite->SetHotSpot(15,15);
@@ -31,7 +36,6 @@ Enemy::Enemy(float _xPos, float _yPos, float _mass, HTEXTURE texture)
 	particle->info.sprite->SetBlendMode(BLEND_ALPHAADD);
 	particle->info.fDirection = M_PI_2;
 }
-
 
 Enemy::~Enemy(void)
 {

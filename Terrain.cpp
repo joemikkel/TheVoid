@@ -40,42 +40,40 @@ Terrain::Terrain(int xSize, int ySize, HGE* hge)
 void Terrain::generate(HGE* hge, DWORD* lockedArray)
 {
 	//configuration variables; boundaries are 'soft'			
-	float maxDeltaH = 2;				//how much the terrain is allowed to move in y across one x (i.e. max slope)
+	float maxDeltaH = 5;			//how much the terrain is allowed to move in y across one x (i.e. max slope)
 	int leftOrigin = height * 0.75;	//how far down the left end of the terrain 'starts'
-	int maxHeight = height * 0.9;	//how far down the screen the terrain is allowed to go
+	int maxHeight = height * 0.8;	//how far down the screen the terrain is allowed to go
 	int minHeight = height * 0.5;	//how high up the screen the terrain is allowed to go <^-coords are reversed
-	int keepDeltaOdds = 80;			//% chance that deltaH won't change
 
-	float deltaH = hge->Random_Float(-1, 1);
-	float deltaHAggregate = 0;
-	int currentH = leftOrigin;	
+	int roughEdgeOdds = 99;		//0-100, odds of not having a 'rough edge' (sudden change in slope) at a given pixel
+	int cliffOdds = 100;		//0-100, odds of not having a cliff at a given pixel
+	int maxCliffHeight = 40;	//max height of cliff in pixels
+	int minCraters = 3;			//generate at least this many craters
+	int maxCraters = 10;		//generate at most this many craters
 
+	float currentH = leftOrigin;	
+
+	float maxSlopeChange = 0.1;
+	float slopeChange;
+	float deltaH = hge->Random_Float(-maxDeltaH, maxDeltaH);
+
+
+	//generate the terrain
 	for(int x = 0; x < width; x++)
 	{
 
-		int randomNum = hge->Random_Int(0,100);
-		if(randomNum > keepDeltaOdds)
-		{
-			deltaH += hge->Random_Float(-1, 1);
-			//keepDeltaOdds = hge->Random_Int(80,99);
-		}
+		slopeChange = hge->Random_Float(-maxSlopeChange, maxSlopeChange);
+		deltaH += slopeChange;
 
-		if(abs(deltaH)<1)
+		if(hge->Random_Int(0,100) > roughEdgeOdds)
+			deltaH = deltaH * maxSlopeChange / abs(deltaH);
+		if(hge->Random_Int(0,100) > cliffOdds 
+				&& currentH - maxCliffHeight > minHeight
+				&& currentH + maxCliffHeight < maxHeight)
 		{
-			deltaHAggregate += deltaH;
-			if(abs(deltaHAggregate) > 1)
-			{
-				deltaHAggregate = 0;
-				currentH++;
-			}
-			else
-			{
-				deltaHAggregate += deltaH;
-			}
+			currentH += hge->Random_Int(-maxCliffHeight, maxCliffHeight);
+			deltaH = hge->Random_Float(-maxSlopeChange, maxSlopeChange);
 		}
-		else
-			currentH += deltaH;
-
 
 		//check steepness bound and correct
 		if(deltaH > maxDeltaH)
@@ -83,16 +81,25 @@ void Terrain::generate(HGE* hge, DWORD* lockedArray)
 		else if(deltaH < -maxDeltaH)
 			deltaH = -maxDeltaH;
 		
-		if(currentH >= maxHeight)
-			deltaH -= 1;
-		else if(currentH <= minHeight)
-			deltaH += 1;
+		if(currentH >= maxHeight && deltaH > 0)
+			deltaH -= maxSlopeChange;
+		else if(currentH <= minHeight && deltaH < 0)
+			deltaH += maxSlopeChange;
+
+		currentH += deltaH;
+		
+		//draw the air/ground for this column in the terrain image
+		for(int j = 0; j < currentH; j++)
+		{
+			setColor(x, j, lockedArray, emptyColor);
+		}
 
 		for(int j = currentH; j < height; j++)
 		{
 			setColor(x, j, lockedArray, groundColor);
 		}
 	}
+	
 }
 float Terrain::calculatePixelNormal(int x, int y, DWORD* lockedArray)
 {

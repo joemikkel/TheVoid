@@ -13,6 +13,8 @@ public:
 	Entity();
 	~Entity(void);
 
+	void setGFX(HTEXTURE texture);
+
 	void applyLinearForce(hgeVector vector, float time);
 	void applyLinearForce(float xForce, float yForce, float time);
 
@@ -31,7 +33,6 @@ public:
 
 	float getXPos(){return this->position.x;}
 	float getYPos(){return this->position.y;}
-
 	float getPrevXPos(){return this->previousPosition.x;}
 	float getPrevYPos(){return this->previousPosition.y;}
 
@@ -47,7 +48,7 @@ protected:
 	float mass;
 
 	bool thrustOn;
-
+	HGE* hge;
 	hgeVector position;
 	hgeVector previousPosition;
 

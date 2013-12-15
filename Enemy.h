@@ -8,6 +8,7 @@ public:
 	Enemy(float _xPos, float _yPos, float _mass, HTEXTURE texture);
 	~Enemy(void);
 
+	void setGFX(HTEXTURE texture);
 	void runAI(float deltaT, Terrain* terrain);
 	void setTarget(int targetX, int targetY){this->targetX = targetX; this->targetY = targetY;}
 	void turnToAngle(float targetAngle, float deltaT);

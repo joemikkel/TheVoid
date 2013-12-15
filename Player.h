@@ -3,7 +3,7 @@
 class Player : public Entity
 {
 public:
-	Player(int xPos, int yPos, HTEXTURE texture);
+	Player(int xPos, int yPos, HGE* hge);
 	~Player(void);
 
 private:

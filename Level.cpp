@@ -22,6 +22,7 @@ Level::~Level(void)
 {
 }
 
+/*Collides entity with terrain and rebounds it*/
 bool Level::collideWithTerrain(Entity* entity)
 {
 	float normal = terrain->findSurfaceCollisionNormal(	entity->getXPos() + entity->bbox0->x, 
@@ -52,7 +53,7 @@ bool Level::collideWithTerrain(Entity* entity)
 		//hge->System_Log("Collision Normal : %f", normal);
 		//decode angle from bits
 		float collisionAngle = normal/255 * M_PI * 2;
-		//calculate the rebound angle and apply it to player
+		//calculate the rebound velocity and apply it to the entity
 		hgeVector* normalVector = new hgeVector(-cos(collisionAngle), sin(collisionAngle));
 		hgeVector entityNormalizedVector = (player->getVelocity()) / player->getSpeed();
 		float dotProduct = normalVector->Dot(&entityNormalizedVector);
@@ -89,7 +90,6 @@ bool Level::createPlayer(int xPos, int yPos)
 
 	enemy = new Enemy( xPos + 100, yPos, 0.1f, playerTexture);
 	return true;
-
 }
 
 bool Level::render()

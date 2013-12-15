@@ -7,8 +7,10 @@ Level* level;
 
 bool FrameFunc()
 {
-	// Process keys
+	// quit on escape
 	if (hge->Input_GetKeyState(HGEK_ESCAPE)) return true;
+
+	//step the level
 	level->logicStep();
 
 	// Continue execution
@@ -17,7 +19,6 @@ bool FrameFunc()
 
 bool RenderFunc()
 {
-
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 
@@ -47,7 +48,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->System_SetState(HGE_SCREENWIDTH, XRES);
 	hge->System_SetState(HGE_SCREENHEIGHT, YRES);
 	hge->System_SetState(HGE_SCREENBPP, 32);
-
 
 	if(hge->System_Initiate())
 	{

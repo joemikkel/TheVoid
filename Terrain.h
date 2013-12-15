@@ -3,7 +3,7 @@
 #include <hgesprite.h>
 #include <hgevector.h>
 #include <xtgmath.h>
-#include "Entity.h"
+//#include "Entity.h"
 class Terrain
 {
 public:
@@ -22,6 +22,8 @@ public:
 	int findAltitudeFrom(int x, int y);
 	int findCeilingFrom(int x, int y);
 
+	HTEXTURE collisionMap;	
+
 private:
 	int width, height;
 
@@ -35,6 +37,5 @@ private:
 	HGE* hge;
 
 	hgeSprite* terrainSprite;
-	HTEXTURE collisionMap;	
 };
 

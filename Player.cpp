@@ -1,9 +1,9 @@
 #include "Player.h"
 
 
-Player::Player(int _xPos, int _yPos, HTEXTURE texture)
+Player::Player(int _xPos, int _yPos, HGE* hge)
 {
-
+	loadSprite(
 }
 
 Player::~Player(void)
