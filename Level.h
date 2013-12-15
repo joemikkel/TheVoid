@@ -11,6 +11,7 @@ public:
 	Level(HGE* _hge, int xRes, int yRes);
 	~Level(void);
 	bool createPlayer(int xPos, int yPos);
+	bool createEnemy(int xPos, int yPos);
 	bool logicStep();
 	bool render();
 

@@ -53,7 +53,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 		level = new Level(hge, XRES, YRES);
 		hge->System_Log("Level Created!");
-		level->createPlayer(400,300);
+		//level->createPlayer(400,300);
 		hge->System_Start();
 	}
 	else MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);

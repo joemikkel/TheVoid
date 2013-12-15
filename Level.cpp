@@ -6,16 +6,19 @@ Level::Level(HGE* _hge, int xRes, int yRes)
 	hge = _hge;
 	this->xRes = xRes;
 	this->yRes = yRes;
+	//set up level
 	gravity = new hgeVector(0,5);
 	terrain = new Terrain(xRes,yRes,_hge);
 	font = new hgeFont("font.fnt", true);
-
+	//set up gfx
 	particleManager = new hgeParticleManager();
-
 	HTEXTURE texture = hge->Texture_Load("ships.png");
 	hgeSprite* sprite = new hgeSprite(texture, 0,0,30,30);
 	sprite->SetHotSpot(15, 15);
 	collisionLarge = new hgeParticleSystem("particle9.psi", sprite);
+	//create a player & enemy
+	createPlayer(xRes/2, yRes/2);
+	createEnemy(100, 100);
 }
 
 Level::~Level(void)
@@ -66,6 +69,20 @@ bool Level::collideWithTerrain(Entity* entity)
 	}
 	return false;
 }
+
+bool Level::createPlayer(int xPos, int yPos)
+{
+	HTEXTURE playerTexture = hge->Texture_Load("ships.png");
+	player = new Entity(xPos, yPos, 0.1f, playerTexture);
+	return true;
+}
+bool Level::createEnemy(int xPos, int yPos)
+{
+	HTEXTURE enemyTexture = hge->Texture_Load("ships.png");
+	enemy = new Enemy( xPos + 100, yPos, 0.1f, enemyTexture);
+	return true;
+}
+
 bool Level::logicStep()
 {
 	deltaT = hge->Timer_GetDelta();
@@ -82,28 +99,21 @@ bool Level::logicStep()
 
 	return true;
 }
-
-bool Level::createPlayer(int xPos, int yPos)
-{
-	HTEXTURE playerTexture = hge->Texture_Load("ships.png");
-	player = new Entity(xPos, yPos, 0.1f, playerTexture);
-
-	enemy = new Enemy( xPos + 100, yPos, 0.1f, playerTexture);
-	return true;
-}
-
 bool Level::render()
 {
 	player->drawSelf(deltaT, hge);
 	enemy->drawSelf(deltaT, hge);
 	terrain->render(hge);
+
 	particleManager->Update(deltaT);
 	particleManager->Render();
 
+	//draw FPS
 	char fps[10];
 	itoa((1/deltaT), fps, 10);
 	font->Render(0,0,HGETEXT_LEFT,fps);
-
+	
+	//draw player speed
 	float playerX = player->getXPos();
 	float playerY = player->getYPos();
 	itoa(player->getSpeed(), fps, 10);
@@ -111,6 +121,7 @@ bool Level::render()
 
 	return true;
 }
+
 void Level::processInput()
 {
 	if (hge->Input_GetKeyState(HGEK_LEFT))
